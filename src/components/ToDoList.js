@@ -1,29 +1,29 @@
 import React, { useState } from 'react';
 import './ToDo.css'
+import {useDispatch, useSelector} from 'react-redux';
+import {addTask , editTask , deleteTask} from './redux/actions'
 const ToDoList = () => {
     const [currentTask, setCurrentTask] = useState('');
-    const [taskCollection, setTaskCollection] = useState([]);
+    const taskCollection = useSelector((state)=> state.tasks);
+    const dispatch = useDispatch();
 
-    const addTask = () => {
+    const addTaskFunction = () => {
         if (currentTask) {
-            setTaskCollection([...taskCollection, currentTask]);
+            dispatch(addTask(currentTask))
+           
         }
         setCurrentTask('');
     };
 
-    const editTask = (index) => {
+    const editTaskFunction = (index) => {
         const newText = prompt('Enter the new Task');
         if (newText) {
-            const tempTask = [...taskCollection];
-            tempTask[index] = newText;
-            setTaskCollection(tempTask);
+            dispatch(editTask(newText, index));
         }
     };
 
-    const deleteTask = (index) => {
-        const tempTask = [...taskCollection];
-        tempTask.splice(index, 1);
-        setTaskCollection(tempTask);
+    const deleteTaskFunction = (index) => {
+        dispatch(deleteTask(index))
     };
 
     return (
@@ -37,7 +37,7 @@ const ToDoList = () => {
                         onChange={(e) => setCurrentTask(e.target.value)}
                         value={currentTask}
                     />
-                    <button onClick={addTask}>Add Task</button>
+                    <button onClick={addTaskFunction}>Add Task</button>
                 </div>
 
                 <div className="task-list">
@@ -45,10 +45,10 @@ const ToDoList = () => {
                         <div key={index} className="task-item">
                             <span>{task}</span>
                             <div className="task-actions">
-                                <button className="edit-btn" onClick={() => editTask(index)}>
+                                <button className="edit-btn" onClick={() => editTaskFunction(index)}>
                                     Edit
                                 </button>
-                                <button className="delete-btn" onClick={() => deleteTask(index)}>
+                                <button className="delete-btn" onClick={() => deleteTaskFunction(index)}>
                                     Delete
                                 </button>
                             </div>
